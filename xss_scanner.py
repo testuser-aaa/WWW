@@ -5,18 +5,9 @@ from urllib.parse import urljoin, urlparse  # Importing utilities for URL manipu
 from urllib.robotparser import RobotFileParser  # Importing RobotFileParser for parsing robots.txt files
 from colorama import Fore, Style  # Importing colorama for colored terminal output
 import argparse  # Importing argparse for command-line argument parsing
-# https://thepythoncode.com/article/make-a-xss-vulnerability-scanner-in-python
+# адрес для теста xss https[:]//xss-game.appspot[.]com/level1/frame
 # List of XSS payloads to test forms with
-XSS_PAYLOADS = [
-    '"><svg/onload=alert(1)>',
-    '\'><svg/onload=alert(1)>',
-    '<img src=x onerror=alert(1)>',
-    '"><img src=x onerror=alert(1)>',
-    '\'><img src=x onerror=alert(1)>',
-    "';alert(String.fromCharCode(88,83,83))//';alert(String.fromCharCode(88,83,83))//--></script>",
-    "<Script>alert('XSS')</scripT>",
-    "<script>alert(document.cookie)</script>",
-]
+XSS_PAYLOADS = []
 # global variable to store all crawled links
 crawled_links = set()
 
@@ -141,6 +132,9 @@ def scan_xss(args, scanned_urls=None):
             form_details = get_form_details(form)
             form_vulnerable = False
             # Testing each form with XSS payloads
+            file_name = str(args.wordlist)
+            with open(file_name,"r",encoding="utf-8") as f:
+                XSS_PAYLOADS = f.read().splitlines()
             for payload in XSS_PAYLOADS:
                 response = submit_form(form_details, args.url, payload)
                 if response and payload in response.content.decode():
@@ -190,6 +184,7 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--max-links", type=int, default=0, help="Maximum number of links to visit. Default 0, which means no limit.")
     parser.add_argument("--obey-robots", action="store_true", help="Obey robots.txt rules")
     parser.add_argument("-o", "--output", help="Output file to save the results")
+    parser.add_argument("-w", "--wordlist", help="wordlist to fuzz")
     args = parser.parse_args()
     scan_xss(args)  # Initiating XSS vulnerability scan
 
