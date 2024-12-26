@@ -7,6 +7,7 @@ from colorama import Fore, Style  # Importing colorama for colored terminal outp
 import argparse  # Importing argparse for command-line argument parsing
 # адрес для теста xss https[:]//xss-game.appspot[.]com/level1/frame
 # List of XSS payloads to test forms with
+#from thepythoncode[.]com
 XSS_PAYLOADS = []
 # global variable to store all crawled links
 crawled_links = set()
